@@ -61,6 +61,22 @@ async function createUser(name, email, password) {
   return true;
 }
 
+async function checkEmail(email) {
+  
+  try {
+    const cek = await usersRepository.getUserbyemail(email);
+
+    if (!cek){
+      throw new Error("Email already exist")
+    }
+
+  } catch (err) {
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Update existing user
  * @param {string} id - User ID
@@ -111,6 +127,7 @@ module.exports = {
   getUsers,
   getUser,
   createUser,
+  checkEmail,
   updateUser,
   deleteUser,
 };

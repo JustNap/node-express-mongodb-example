@@ -8,6 +8,11 @@ async function getUsers() {
   return User.find({});
 }
 
+// detect email yang duplikat
+async function getUsersbyemail(emailRequest){
+  return User.findOne({email: emailRequest})
+}
+
 /**
  * Get user detail
  * @param {string} id - User ID
@@ -64,6 +69,7 @@ async function deleteUser(id) {
 
 module.exports = {
   getUsers,
+  getUsersbyemail,
   getUser,
   createUser,
   updateUser,
