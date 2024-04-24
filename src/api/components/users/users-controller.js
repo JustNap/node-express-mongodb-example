@@ -86,6 +86,16 @@ async function updateUser(request, response, next) {
     const name = request.body.name;
     const email = request.body.email;
 
+    if(email){
+      const emailExisting = await usersService.checkEmail(email);
+      if (emailExisting) {
+        throw errorResponder(
+          errorTypes.UNPROCESSABLE_ENTITY,
+          'EMAIL_ALREADY_TAKEN'
+        );
+      }
+    }
+
     const success = await usersService.updateUser(id, name, email);
     if (!success) {
       throw errorResponder(
