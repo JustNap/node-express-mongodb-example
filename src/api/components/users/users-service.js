@@ -64,17 +64,17 @@ async function createUser(name, email, password) {
 async function checkEmail(email) {
   
   try {
-    const cek = await usersRepository.getUserbyemail(email);
+    const cek = await usersRepository.getUsersbyemail(email);
 
-    if (!cek){
-      throw new Error("Email already exist")
+    if (cek){
+      return true;
     }
 
   } catch (err) {
-    return false;
+    throw err;
   }
 
-  return true;
+  return false;
 }
 
 /**
