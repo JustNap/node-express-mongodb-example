@@ -67,6 +67,19 @@ async function deleteUser(id) {
   return User.deleteOne({ _id: id });
 }
 
+async function updatePassword(id, password_baru){
+  return User.updateOne(
+    {
+      _id: id
+    },
+    {
+      $set:{
+        password: password_baru,
+      },
+    }
+  );
+}
+
 module.exports = {
   getUsers,
   getUsersbyemail,
@@ -74,4 +87,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  updatePassword,
 };

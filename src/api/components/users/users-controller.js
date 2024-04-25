@@ -1,6 +1,6 @@
 const usersService = require('./users-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
-
+const { compare, hash } = require('bcrypt');
 /**
  * Handle get list of users request
  * @param {object} request - Express request object
@@ -143,10 +143,63 @@ async function deleteUser(request, response, next) {
   }
 }
 
+async function changePassword(request, response, next){
+  try{
+    const id = request.params.id;
+    const password_lama = request.body.password_lama;
+    const password_baru = request.body.password_baru;
+    const password_baru_confirm = request.body.password_baru_confirm;
+
+    if(password_baru != password_baru_confirm){
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'password not same'
+      );
+    }
+
+    const user = await usersService.getUser(request.params.id);
+    if(!user){
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Unknown'
+      );
+    }
+
+    const passValid = await valid(password_lama, user.password);
+    if(!passValid){
+      throw errorResponder(
+        errorTypes.UNAUTHORIZED,
+        'Invalid old password'
+      );
+    }
+    
+    if (password_baru.length < 6 || password_baru.length > 32) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'New password length must be between 6 and 32 characters'
+      );
+    }
+
+    const hashPassword_baru = await hash(password_baru);
+    const success = await usersService.updatePassword(request.params.id, Password_baru);
+    if (!success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to update password'
+      );
+    }
+
+    return response.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   updateUser,
   deleteUser,
+  changePassword,
 };
